@@ -1,38 +1,26 @@
 // server.js
-const path = require('path');
 const express = require('express');
-const fetch = require('node-fetch');
-const http = require('http');
-const cheerio = require('cheerio');
 const path = require('path');
+const cheerio = require('cheerio');
 const cors = require('cors');
 
-// --- 1. CORRECTLY INITIALIZE THE EXPRESS APP ---
+// --- 1. INITIALIZE THE EXPRESS APP AND MIDDLEWARE ---
 const app = express();
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
 const host = '0.0.0.0';
 
 // Use environment variable for port, defaulting to 3000
 const PORT = process.env.PORT || 3000;
 
-// --- 2. CREATE THE HTTP SERVER USING THE EXPRESS APP ---
-const server = http.createServer(app);
-
-// --- 3. SET TIMEOUTS ON THE SERVER OBJECT (CORRECT LOCATION) ---
-// This is the solution for the intermittent timeouts and connection reset errors.
-server.keepAliveTimeout = 120000;
-server.headersTimeout = 120000;
-
-// --- 4. ADD MIDDLEWARE AND ROUTES (BEFORE THE LISTEN CALL) ---
-// This enables ALL CORS requests, allowing your frontend to access the backend.
+// Enable ALL CORS requests for frontend access
 app.use(cors());
 
 // Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, index.html)));
+// NOTE: Your index.html and any other static files (CSS, JS, etc.)
+// must be placed inside a folder named 'public' for this to work.
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Define the API route for searching wallpapers
+// --- 2. DEFINE ROUTES ---
+// The API route for searching wallpapers
 app.get('/search', async (req, res) => {
   const query = req.query.q;
   if (!query) {
@@ -41,6 +29,8 @@ app.get('/search', async (req, res) => {
 
   try {
     const url = `https://www.wallpaperflare.com/search?wallpaper=${encodeURIComponent(query)}`;
+    
+    // Using the native Node.js fetch API (available in Node.js 18+)
     const response = await fetch(url);
     const body = await response.text();
     const $ = cheerio.load(body);
@@ -60,13 +50,15 @@ app.get('/search', async (req, res) => {
 
     res.json({ wallpapers });
   } catch (err) {
-    console.error('Scraping failed:', err); // Log the error for debugging
+    console.error('Scraping failed:', err);
     res.status(500).json({ error: 'Scraping failed', details: err.message });
   }
 });
 
-// --- 5. START THE SERVER (ONLY ONE LISTEN CALL) ---
-// Use the defined server object and PORT variable.
-server.listen(PORT, host, () => {
+// The route for the homepage should be handled by express.static
+// No need for a separate app.get('/', ...) if your index.html is in 'public'
+
+// --- 3. START THE SERVER ---
+app.listen(PORT, host, () => {
   console.log(`Server listening on http://${host}:${PORT}`);
 });
