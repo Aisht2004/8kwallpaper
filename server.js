@@ -1,4 +1,5 @@
 // server.js
+const path = require('path');
 const express = require('express');
 const fetch = require('node-fetch');
 const http = require('http');
@@ -9,7 +10,7 @@ const cors = require('cors');
 // --- 1. CORRECTLY INITIALIZE THE EXPRESS APP ---
 const app = express();
 app.get('/', (req, res) => {
-  res.send('Server is running and working! This is the homepage.');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 const host = '0.0.0.0';
 
