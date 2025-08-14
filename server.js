@@ -8,6 +8,9 @@ const cors = require('cors');
 
 // --- 1. CORRECTLY INITIALIZE THE EXPRESS APP ---
 const app = express();
+app.get('/', (req, res) => {
+  res.send('Server is running and working! This is the homepage.');
+});
 const host = '0.0.0.0';
 
 // Use environment variable for port, defaulting to 3000
