@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>8K Wallpaper Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #111827;
+      --muted: #9aa4b2;
+      --text: #e5e7eb;
+      --brand: #00d4ff;
+      --brand-2: #5b8eff;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+      background: radial-gradient(1200px 800px at 10% -20%, rgba(0,212,255,0.15), rgba(0,0,0,0)),
+                  radial-gradient(800px 600px at 100% 0%, rgba(91,142,255,0.12), rgba(0,0,0,0)),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    header {
+      position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,15,20,0.85), rgba(11,15,20,0.6));
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 14px 18px; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight: 800; letter-spacing: 0.3px; font-size: 1.15rem; }
+    .brand .logo { width: 34px; height: 34px; border-radius: 12px; background: conic-gradient(from 180deg, var(--brand), var(--brand-2), var(--brand) 80%); position: relative; box-shadow: 0 8px 24px rgba(0,212,255,0.35), inset 0 0 40px rgba(91,142,255,0.25); }
+    .brand b { background: linear-gradient(90deg, #fff, #cbd5e1); -webkit-background-clip: text; color: transparent; }
+
+    .status { display:none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .status-inner { max-width:1200px; margin:0 auto; padding: 8px 18px; font-size: 13px; color:#0b0f14; }
+    .status.warn { display:block; background: linear-gradient(90deg, #fde68a, #fcd34d); }
+    .status.err { display:block; background: linear-gradient(90deg, #fda4af, #f87171); }
+
+    .toolbar { display:grid; grid-template-columns: 1fr auto; gap: 12px; margin-top: 10px; }
+    .searchbar { display:flex; gap:10px; }
+    .searchbar input { flex:1; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: rgba(17,24,39,0.9); color: var(--text); outline: none; }
+    .searchbar button, .filters button { padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: linear-gradient(180deg, rgba(17,24,39,0.95), rgba(17,24,39,0.75)); color: #e5e7eb; cursor: pointer; transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease; }
+    .searchbar button:hover, .filters button:hover { transform: translateY(-1px); border-color: rgba(0,212,255,0.45); box-shadow: 0 8px 18px rgba(0,212,255,0.12); }
+    .filters { display:flex; flex-wrap: wrap; gap: 10px; align-items:center; }
+    .chip { display:inline-flex; gap:8px; align-items:center; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.08); background: rgba(17,24,39,0.6); }
+    .chip input { accent-color: var(--brand); }
+
+    main { padding: 14px 18px 28px; }
+    #gallery { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); }
+    @media (min-width: 640px) { #gallery { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 960px) { #gallery { grid-template-columns: repeat(4, 1fr); } }
+
+    .card { position: relative; border-radius: 14px; overflow: hidden; background: var(--card); border: 1px solid rgba(255,255,255,0.06); }
+    .card img { width:100%; height: 100%; display:block; aspect-ratio: 16/10; object-fit: cover; }
+    .card .meta { position:absolute; inset:auto 8px 8px 8px; padding:6px 8px; background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,0.7)); border-radius: 10px; display:flex; justify-content: space-between; align-items: end; gap:8px; color: #e5e7eb; font-size: 12px; }
+    .pill { padding: 3px 8px; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; }
+
+    #loadMore { margin: 18px auto 0; display:block; }
+
+    
+
+    /* Modal */
+    dialog#viewer { width: min(96vw, 1100px); border: none; background: rgba(10, 13, 18, 0.95); color: var(--text); border-radius: 16px; }
+    dialog::backdrop { background: rgba(0,0,0,0.65); }
+    .viewer-head { display:flex; justify-content: space-between; gap: 10px; align-items: center; padding: 8px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .viewer-actions { display:flex; gap: 8px; align-items:center; }
+    .viewer-actions a, .viewer-actions button { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: rgba(17,24,39,0.7); color: #e5e7eb; text-decoration: none; cursor: pointer; }
+    .viewer-img { display:block; width:100%; height:auto; border-radius: 0 0 16px 16px; }
+
+    /* Test panel */
+    details#tests { max-width: 1200px; margin: 24px auto; background: rgba(17,24,39,0.6); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 14px; }
+    #testlog { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 12px; color: #e5e7eb; }
+  </style>
+</head>
+<body>
+  <div class="status warn" id="statusBar" hidden>
+    <div class="status-inner" id="statusText">Trying direct API…</div>
+  </div>
+  <header>
+    <div class="container">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div><b>8K Wallpaper Pro</b></div>
+          <small style="color:var(--muted)">Powered by Wallhaven API</small>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="searchbar">
+          <input id="q" type="search" placeholder="Search wallpapers (e.g., nature, neon city, anime)" />
+          <button id="searchBtn" title="Search">Search</button>
+        </div>
+        <div class="filters">
+          <button data-sort="toplist" title="Toplist">Top</button>
+          <button data-sort="date_added" title="Latest">Latest</button>
+          <button data-sort="random" title="Random">Random</button>
+          <span class="chip"><input type="checkbox" id="only8k" /> <label for="only8k">Only 8K (≥7680×4320)</label></span>
+          <span class="chip"><input type="checkbox" id="ratio169" checked /> <label for="ratio169">16:9</label></span>
+          <span class="chip"><input type="checkbox" id="sfw" checked /> <label for="sfw">SFW</label></span>
+          <span class="chip"><input type="checkbox" id="general" checked /> <label for="general">General</label></span>
+          <span class="chip"><input type="checkbox" id="useProxy" /> <label for="useProxy">Use proxy</label></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="gallery"></div>
+    <button id="loadMore">Load More</button>
+  </main>
+
+  
+
+
+  <dialog id="viewer">
+    <div class="viewer-head">
+      <div id="viewerTitle">Preview</div>
+      <div class="viewer-actions">
+        <a id="openOnWallhaven" href="#" target="_blank" rel="noopener">Open on Wallhaven</a>
+        <a id="downloadBtn" href="#" download>Download</a>
+        <button id="closeViewer">Close</button>
+      </div>
+    </div>
+    <img id="viewerImg" class="viewer-img" alt="Wallpaper preview" />
+  </dialog>
+
+  <details id="tests">
+    <summary>Developer tests (click to run)</summary>
+    <div style="display:flex; gap:8px; margin: 8px 0;">
+      <button id="runTests">Run unit tests</button>
+      <button id="simulateOffline">Simulate offline demo</button>
+    </div>
+    <pre id="testlog"></pre>
+  </details>
+
+  <script>
+    // ====== CONFIG ======
+    const API_BASE = 'https://wallhaven.cc/api/v1';
+    // Two CORS-friendly fallbacks
+    const PROXY_CORS_ISO = 'https://cors.isomorphic-git.org/https://wallhaven.cc/api/v1';
+    const PROXY_ALLO = 'https://api.allorigins.win/raw?url='; // will wrap the full URL
+    // WARNING: Exposing API keys in client-side code is insecure. Prefer a server/proxy for production.
+    const API_KEY = 'a5PwEh7Oql1t0SL2zlt0FOxTPJ5ZTnAH';
+
+    // ====== STATE ======
+    let state = { q: '', sorting: 'toplist', page: 1, loading: false, lastPage: Infinity };
+
+    // ====== DOM ======
+    const $ = (sel) => document.querySelector(sel);
+    const gallery = $('#gallery');
+    const loadMoreBtn = $('#loadMore');
+    const statusBar = $('#statusBar');
+    const statusText = $('#statusText');
+
+    // ====== HELPERS ======
+    function setStatus(msg, type = 'warn') {
+      statusText.textContent = msg; statusBar.className = `status ${type}`; statusBar.hidden = false;
+    }
+    function clearStatus() { statusBar.hidden = true; }
+
+    function buildQuery() {
+      const params = new URLSearchParams();
+      if (state.q) params.set('q', state.q);
+      params.set('sorting', state.sorting);
+      params.set('page', state.page);
+
+      // Categories: General(1), Anime(0), People(0) -> '100'
+      const categories = $('#general').checked ? '100' : '000';
+      params.set('categories', categories);
+
+      // Purity: SFW(1), Sketchy(0), NSFW(0) -> '100'
+      const purity = $('#sfw').checked ? '100' : '000';
+      params.set('purity', purity);
+
+      // At least resolution
+      if ($('#only8k').checked) params.set('atleast', '7680x4320');
+
+      // Ratio
+      if ($('#ratio169').checked) params.set('ratios', '16x9');
+
+      // Use query param apikey to avoid CORS preflight with custom headers
+      params.set('apikey', API_KEY);
+      return params;
+    }
+
+    function buildCandidateUrls(params) {
+      const qs = params.toString();
+      const direct = `${API_BASE}/search?${qs}`;
+      const viaIso = `${PROXY_CORS_ISO}/search?${qs}`;
+      const viaAllOrigins = `${PROXY_ALLO}${encodeURIComponent(direct)}`;
+      const useProxy = document.getElementById('useProxy').checked;
+      if (useProxy) return [viaIso, viaAllOrigins];
+      return [direct, viaIso, viaAllOrigins];
+    }
+
+    function cardTemplate(w) {
+      const title = w.resolution + ' • ' + (w.category || '').toUpperCase();
+      const small = (w.thumbs && (w.thumbs.large || w.thumbs.original || w.thumbs.small)) || w.path;
+      return `
+        <article class="card" data-id="${w.id}" data-url="${w.url}" data-path="${w.path}" aria-label="${title}">
+          <img loading="lazy" src="${small}" alt="${title}">
+          <div class="meta">
+            <span class="pill">${w.resolution || ''}</span>
+            <span class="pill">❤ ${w.favorites ?? 0}</span>
+          </div>
+        </article>
+      `;
+    }
+
+    function insertHtmlOrEmpty(html) {
+      gallery.insertAdjacentHTML('beforeend', html || '<p style="grid-column:1/-1;color:var(--muted)">No results.</p>');
+    }
+
+    async function fetchJSONFlexible(url) {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), 12000);
+      try {
+        const res = await fetch(url, { signal: controller.signal, mode: 'cors' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        // Try JSON first, if it fails (e.g., allorigins), parse text
+        try {
+          return await res.json();
+        } catch (_) {
+          const text = await res.text();
+          return JSON.parse(text);
+        }
+      } finally { clearTimeout(t); }
+    }
+
+    async function tryFetchSequence(urls) {
+      let lastErr;
+      for (let i = 0; i < urls.length; i++) {
+        const u = urls[i];
+        setStatus(`Fetching wallpapers… (${i+1}/${urls.length})`, 'warn');
+        try { return await fetchJSONFlexible(u); } catch (e) { lastErr = e; }
+      }
+      throw lastErr || new Error('Failed to fetch from all sources');
+    }
+
+    async function fetchWallhaven() {
+      if (state.loading || state.page > state.lastPage) return;
+      state.loading = true; loadMoreBtn.disabled = true; loadMoreBtn.textContent = 'Loading…';
+
+      const params = buildQuery();
+      const urls = buildCandidateUrls(params);
+
+      try {
+        const json = await tryFetchSequence(urls);
+        state.lastPage = json?.meta?.last_page ?? state.lastPage;
+        const html = (json?.data || []).map(cardTemplate).join('');
+        insertHtmlOrEmpty(html);
+        clearStatus();
+      } catch (err) {
+        console.error(err);
+        setStatus(`Failed to fetch wallpapers. ${err.message}. Showing demo data instead.`, 'err');
+        renderDemo();
+      } finally {
+        state.loading = false; loadMoreBtn.disabled = false; loadMoreBtn.textContent = 'Load More';
+      }
+    }
+
+    function resetAndSearch() { state.page = 1; state.lastPage = Infinity; gallery.innerHTML = ''; fetchWallhaven(); }
+
+    // ====== EVENTS ======
+    $('#searchBtn').addEventListener('click', () => { state.q = $('#q').value.trim(); resetAndSearch(); });
+    $('#q').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#searchBtn').click(); });
+
+    document.querySelectorAll('[data-sort]').forEach(btn => { btn.addEventListener('click', () => { state.sorting = btn.dataset.sort; resetAndSearch(); }); });
+    ;['only8k','ratio169','sfw','general','useProxy'].forEach(id => { document.getElementById(id).addEventListener('change', () => resetAndSearch()); });
+
+    loadMoreBtn.addEventListener('click', () => { state.page++; fetchWallhaven(); });
+
+    // Open viewer modal
+    const viewer = document.getElementById('viewer');
+    const viewerImg = document.getElementById('viewerImg');
+    const viewerTitle = document.getElementById('viewerTitle');
+    const openOnWallhaven = document.getElementById('openOnWallhaven');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const closeViewer = document.getElementById('closeViewer');
+
+    gallery.addEventListener('click', (e) => {
+      const card = e.target.closest('.card');
+      if (!card) return;
+      const url = card.getAttribute('data-url');
+      const path = card.getAttribute('data-path');
+      const title = card.getAttribute('aria-label');
+      viewerImg.src = path; viewerImg.alt = title; viewerTitle.textContent = title;
+      openOnWallhaven.href = url; downloadBtn.href = path; viewer.showModal();
+    });
+    closeViewer.addEventListener('click', () => viewer.close());
+
+    // ====== DEMO DATA (offline fallback) ======
+    const DEMO = {
+      meta: { current_page: 1, last_page: 1 },
+      data: [
+        {
+          id: 'demo1',
+          url: 'https://wallhaven.cc/w/demo1',
+          path: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1920',
+          thumbs: { large: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800' },
+          resolution: '7680x4320', favorites: 123, category: 'general'
+        },
+        {
+          id: 'demo2',
+          url: 'https://wallhaven.cc/w/demo2',
+          path: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1920',
+          thumbs: { large: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=800' },
+          resolution: '5120x2880', favorites: 87, category: 'general'
+        }
+      ]
+    };
+    function renderDemo() { const html = DEMO.data.map(cardTemplate).join(''); insertHtmlOrEmpty(html); }
+
+    // ====== TESTS ======
+    function log(line, ok=true) {
+      const el = document.getElementById('testlog');
+      el.textContent += (ok ? '✔ ' : '✖ ') + line + '\n';
+    }
+    function assertEqual(a, b, msg) { const ok = a === b; log(msg + (ok ? '' : `\n   expected: ${b}\n   got: ${a}`), ok); }
+    function assert(cond, msg) { log(msg, !!cond); }
+    function runTests() {
+      document.getElementById('testlog').textContent = '';
+      // Test 1: default query includes apikey & sorting
+      state.q = 'neon city'; state.sorting = 'toplist'; state.page = 3;
+      $('#only8k').checked = true; $('#ratio169').checked = true; $('#sfw').checked = true; $('#general').checked = true; $('#useProxy').checked = false;
+      const p1 = buildQuery();
+      assertEqual(p1.get('q'), 'neon city', 'buildQuery() sets q');
+      assertEqual(p1.get('sorting'), 'toplist', 'buildQuery() sets sorting');
+      assertEqual(p1.get('page'), '3', 'buildQuery() sets page');
+      assertEqual(p1.get('categories'), '100', 'buildQuery() sets categories=100 when General checked');
+      assertEqual(p1.get('purity'), '100', 'buildQuery() sets purity=100 when SFW checked');
+      assertEqual(p1.get('atleast'), '7680x4320', 'Only8K adds atleast=7680x4320');
+      assertEqual(p1.get('ratios'), '16x9', '16:9 adds ratios=16x9');
+      assert(p1.get('apikey') === API_KEY, 'buildQuery() includes apikey (avoids preflight)');
+
+      // Test 2: Ensure card template renders essentials
+      const html = cardTemplate(DEMO.data[0]);
+      assert(/data-id="demo1"/.test(html), 'cardTemplate() contains data-id');
+      assert(/7680x4320/.test(html), 'cardTemplate() shows resolution');
+
+      // Test 3: Fallback demo rendering
+      gallery.innerHTML = '';
+      renderDemo();
+      assert(gallery.children.length >= 1, 'renderDemo() inserts demo cards when API unavailable');
+
+      // Test 4: Negative filter cases
+      $('#sfw').checked = false; $('#general').checked = false; $('#only8k').checked = false; $('#ratio169').checked = false;
+      state.page = 1; state.q = 'test';
+      const p2 = buildQuery();
+      assertEqual(p2.get('purity'), '000', 'buildQuery() purity=000 when SFW unchecked');
+      assertEqual(p2.get('categories'), '000', 'buildQuery() categories=000 when General unchecked');
+      assertEqual(p2.get('atleast'), null, 'buildQuery() omits atleast when Only8K unchecked');
+      assertEqual(p2.get('ratios'), null, 'buildQuery() omits ratios when 16:9 unchecked');
+
+      // Test 5: Candidate URL ordering
+      $('#useProxy').checked = false; const urls1 = buildCandidateUrls(p1);
+      assert(urls1[0].startsWith(API_BASE), 'buildCandidateUrls() starts with direct when proxy off');
+      $('#useProxy').checked = true; const urls2 = buildCandidateUrls(p1);
+      assert(!urls2[0].startsWith(API_BASE), 'buildCandidateUrls() starts with proxy when proxy on');
+
+      log('All tests finished. If any ✖ shows, please report.', true);
+    }
+    document.getElementById('runTests').addEventListener('click', runTests);
+    document.getElementById('simulateOffline').addEventListener('click', () => { gallery.innerHTML=''; renderDemo(); setStatus('Simulated offline mode — showing demo data.', 'warn'); });
+
+    // Initial load
+    (function init(){
+      const params = new URLSearchParams(location.search);
+      if (params.get('demo') === '1') {
+        setStatus('Demo mode enabled via ?demo=1 — using sample data.', 'warn');
+        gallery.innerHTML = ''; renderDemo(); return;
+      }
+      if (location.protocol === 'file:') setStatus('You are running from file:// — some browsers restrict network calls. If images do not load, please host on Netlify/Vercel or enable "Use proxy".', 'warn');
+      resetAndSearch();
+    })();
+  </script>
+</body>
+</html>
