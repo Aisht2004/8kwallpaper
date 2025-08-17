@@ -9,18 +9,93 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 950px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .button-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+        }
+
+        /* Professional gradients for each theme */
+        .theme-1 { background: linear-gradient(135deg, #1f4037, #99f2c8); }
+        .theme-2 { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
+        .theme-3 { background: linear-gradient(135deg, #dbc2c2f0, #ff2200); color:#efefef; }
+        .theme-4 { background: linear-gradient(135deg, #bd8333, #1a1a93); }
+        .theme-5 { background: linear-gradient(135deg, #6252f0, #4653c6); }
+        .theme-6 { background: linear-gradient(135deg, #283c86, #45a247); }
+        .theme-7 { background: linear-gradient(135deg, #654ea3, #eaafc8); }
+        .theme-news { background: linear-gradient(135deg, #6a11cb, #2575fc); }
+        .theme-8 { background: linear-gradient(135deg, #0cebeb, #20e3b2, #29ffc6); }
+        .theme-art { background: linear-gradient(135deg, #fc466b, #3f5efb); }
+
+        /* Hover effects */
+        .button-item:hover {
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .button-item:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+        }
+    </style>
 </head>
 <body class="bg-gray-900 text-gray-100 flex flex-col items-center">
 
     <header class="w-full max-w-6xl p-6 bg-gray-800 rounded-b-xl shadow-lg mt-0">
         <h1 class="text-4xl font-bold text-center text-indigo-400">8K Wallpaper pro</h1>
         <div class="mt-6 flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <input type="text" id="searchInput" placeholder="Search for wallpapers..."
-                   class="w-full sm:w-80 px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
-            <button id="searchButton"
-                    class="w-full sm:w-auto px-6 py-2 rounded-full bg-indigo-500 text-white font-semibold hover:bg-indigo-600 transition-colors shadow-lg">
-                Search
-            </button>
+            
+            <div class="button-container">
+                <a href="index2.html" class="button-item theme-1">Search</a>
+                <a href="mobile.html" class="button-item theme-2">Mobile Only</a>
+                <a href="#" class="button-item theme-3">Marvel</a>
+                <a href="#" class="button-item theme-4">Anime</a>
+                <a href="#" class="button-item theme-5">Cricket</a>
+                <a href="#" class="button-item theme-6">Football</a>
+                <a href="#" class="button-item theme-7">Gaming</a>
+                <a href="#" class="button-item theme-news">News</a>
+                <a href="#" class="button-item theme-8">Technology</a>
+                <a href="#" class="button-item theme-art">Art</a>
+            </div>
+            
         </div>
     </header>
 
@@ -291,7 +366,7 @@
             </div>
             
             <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                <a href="https://www.wallpaperflare.com/digital-art-photoshop-concept-art-futuristic-futuristic-city-wallpaper-cufgg" target="_blank">
+                <a href="https://www.wallpaperflare.com/digital-photoshop-concept-art-futuristic-futuristic-city-wallpaper-cufgg" target="_blank">
                     <img src="https://c4.wallpaperflare.com/wallpaper/364/854/488/digital-art-photoshop-concept-art-futuristic-wallpaper-thumb.jpg" alt="digital art, Photoshop, concept art, futuristic, futuristic city HD wallpaper" class="w-full h-auto object-cover">
                 </a>
                 <div class="p-4">
@@ -356,7 +431,7 @@
                 </a>
                 <div class="p-4">
                     <p class="text-sm text-gray-400">Resolution: 3840x2400px</p>
-                    <p class="mt-1 text-white truncate">Old Port Of Maasslui Netherlands 4k Ultra Hd Desktop Wallpapers For Computers Laptop Tablet And Mobile Phones 3840×2400</p>
+                    <p class="mt-1 text-white truncate">Old Port Of Maasslui Netherlands 4k Ultra Hd Desktop Wallpapers For Computers Laptop Tablet And Mobile Phones 3840x2400</p>
                 </div>
             </div>
             
